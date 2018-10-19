@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import 'styles/app.scss';
 
 class App extends Component {
   render() {
     return (
       <div className="app">
-        <nav className="menu">
-          
-        </nav>
       </div>
     );
   }
