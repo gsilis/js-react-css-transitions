@@ -93,9 +93,17 @@ class SmallNav extends Component {
   }
 
   renderPanel(props) {
+    const currentPath = this.state.paths.join('/');
+
     return (
       <ul className={ 'menu-panel ' + props.className }>
-        { props.menus.map((menu, index) => <li className="menu-item with-next" key={ index } onClick={ () => { this.onPath(menu.path) } }>{ menu.title }</li>) }
+        { props.menus.map((menu, index) => {
+          const nextClass = !!menus[currentPath + '/' + menu.path] ? ' with-next' : '';
+
+          return (
+            <li className={ `menu-item ${nextClass}` } key={ index } onClick={ () => { this.onPath(menu.path) } }>{ menu.title }</li>
+          );
+        })}
       </ul>
     );
   }
@@ -108,21 +116,13 @@ class SmallNav extends Component {
     const parentMenus = menus[prevPath] || [];
     const parentMenuPath = prevPath.split('/').pop();
     const currentMenuPath = this.state.paths.slice(this.state.paths.length - 1)[0];
-    console.log('CURRENT PATH', currentMenuPath);
     const parentMenu = parentMenus.filter(menu => menu.path === currentMenuPath)[0] || {};
     const currentTitle = parentMenu && parentMenu.title || 'Menu';
-    console.log('PARENT MENU', parentMenu);
 
     const visibleBack = this.state.paths.length > 1;
     const settings = {
       className: 'material-icons back',
     };
-
-    console.log({
-      path: currentPath,
-      parent: prevPath,
-      parentMenu,
-    });
     
     if (visibleBack) {
       settings.onClick = this.onUp;

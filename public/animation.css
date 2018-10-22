@@ -1,0 +1,56 @@
+html, body {
+  margin: 0;
+}
+
+.control-strip {
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+}
+
+.ball {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background-color: red;
+}
+
+.ball.run-right {
+  animation: current-right;
+  animation-duration: .3s;
+}
+
+.ball.run-left {
+  animation: right-current;
+  animation-duration: .3s;
+}
+
+.ball.finished {
+  display: none;
+}
+
+@keyframes current-right {
+  from {
+    margin-left: 0;
+    opacity: 1;
+  }
+
+  to {
+    margin-left: 110%;
+    opacity: 0;
+  }
+}
+
+@keyframes right-current {
+  from {
+    margin-left: 110%;
+    opacity: 0;
+  }
+
+  to {
+    margin-left: 0;
+    opacity: 1;
+  }
+}
