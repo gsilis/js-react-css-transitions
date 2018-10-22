@@ -33,9 +33,9 @@ function LargeNav() {
 }
 
 const menus = {
-  '/': [
-    { title: 'About', path: 'about/' },
-    { title: 'Contact', path: 'contact/' },
+  '': [
+    { title: 'About', path: 'about' },
+    { title: 'Contact', path: 'contact' },
   ],
   '/about': [
     { title: 'People', path: 'people' },
@@ -43,7 +43,7 @@ const menus = {
     { title: 'What', path: 'what' },
   ],
   '/contact': [
-    { title: 'Places', path: 'places/' },
+    { title: 'Places', path: 'places' },
     { title: 'Offices', path: 'offices' },
     { title: 'Person', path: 'person' },
   ],
@@ -59,7 +59,7 @@ class SmallNav extends Component {
 
     this.state = {
       show: true,
-      paths: ['/'],
+      paths: [''],
       title: '',
     };
 
@@ -94,45 +94,54 @@ class SmallNav extends Component {
 
   renderPanel(props) {
     return (
-      <ul className={ props.className }>
-        { props.menus.map((menu, index) => <li key={ index } onClick={ () => { this.onPath(menu.path) } }>{ menu.title }</li>) }
+      <ul className={ 'menu-panel ' + props.className }>
+        { props.menus.map((menu, index) => <li className="menu-item with-next" key={ index } onClick={ () => { this.onPath(menu.path) } }>{ menu.title }</li>) }
       </ul>
     );
   }
 
   renderMenu() {
-    let prevPath = this.state.paths.slice(0, this.state.paths.length - 1).join('');
-    let currentPath = this.state.paths.join('');
+    let prevPath = this.state.paths.slice(0, this.state.paths.length - 1).join('/');
+    let currentPath = this.state.paths.join('/');
 
-    if (currentPath !== '/') {
-      currentPath = currentPath.replace(/\/$/, '');
-    }
-
-    if (prevPath !== '/') {
-      prevPath = prevPath.replace(/\/$/, '');
-    }
-
-    const prevMenus = menus[prevPath] || [];
     const currentMenus = menus[currentPath] || [];
-    const nextMenus = [];
-    const backButton = this.state.paths.length > 1 ? <div className="material-icons" onClick={ this.onUp }>keyboard_arrow_left</div> : null;
-    let currentTitle = prevMenus.filter(menu => this.state.paths[this.state.paths.length - 1] === currentPath)[0];
-    currentTitle = currentTitle && currentTitle.title || 'Menu';
-    console.log(currentTitle);
+    const parentMenus = menus[prevPath] || [];
+    const parentMenuPath = prevPath.split('/').pop();
+    const currentMenuPath = this.state.paths.slice(this.state.paths.length - 1)[0];
+    console.log('CURRENT PATH', currentMenuPath);
+    const parentMenu = parentMenus.filter(menu => menu.path === currentMenuPath)[0] || {};
+    const currentTitle = parentMenu && parentMenu.title || 'Menu';
+    console.log('PARENT MENU', parentMenu);
+
+    const visibleBack = this.state.paths.length > 1;
+    const settings = {
+      className: 'material-icons back',
+    };
+
+    console.log({
+      path: currentPath,
+      parent: prevPath,
+      parentMenu,
+    });
+    
+    if (visibleBack) {
+      settings.onClick = this.onUp;
+    } else {
+      settings.className += ' placeholder-button';
+      settings.onClick = () => {};
+    }
+
+    const backButton = <div { ...settings }>keyboard_arrow_left</div>;
 
     return (
       <div className="menu-container">
         <div className="menu-header">
           { backButton }
           <div className="title">
-            <p className="menu-prev">{ this.state.prevTitle }</p>
             <p className="menu-current">{ currentTitle }</p>
-            <p className="menu-next">{ this.state.nextTitle }</p>
           </div>
           <div className="material-icons">close</div>
         </div>
-        <this.renderPanel className="menu-panel panel-prev" menus={ prevMenus || [] } />
-        <this.renderPanel className="menu-panel panel-next" menus={ nextMenus || [] } />
         <this.renderPanel className="menu-panel panel-current" menus={ currentMenus || [] } />
       </div>
     );
